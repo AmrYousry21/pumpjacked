@@ -75,6 +75,39 @@
   .lift-current{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--rust);}
   .lift-current .none{color:var(--muted);}
 
+  .totals-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+  .totals-card{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center;}
+  .totals-card .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+  .totals-card .val{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;}
+  .totals-card.cal .val{color:var(--rust);}
+  .totals-card.protein .val{color:var(--steel);}
+  .totals-card.carbs .val{color:var(--olive);}
+  .totals-card.fat .val{color:#d4a14a;}
+
+  .wcell.calcell{background:var(--card-2);color:var(--text);}
+  .wcell.calcell .wd, .wcell.calcell .dt{color:var(--text);}
+  .wcell.calcell .kcal{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:3px;color:var(--olive);display:block;}
+  .wcell.calcell.active{background:var(--rust);}
+  .wcell.calcell.active .wd, .wcell.calcell.active .dt{color:#161310;}
+  .wcell.calcell.active .kcal{color:#2c2010;}
+
+  .meal-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:18px;}
+  table.meals{width:100%;border-collapse:collapse;}
+  table.meals th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line);}
+  table.meals td{padding:9px 6px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
+  table.meals input{width:64px;background:var(--card-2);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:6px 7px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  table.meals input:focus{outline:none;border-color:var(--rust);}
+  table.meals input[type="time"]{width:90px;}
+  table.meals .meal-name{font-family:'Oswald',sans-serif;font-weight:600;}
+  .photo-cell{display:flex;align-items:center;gap:6px;}
+  .photo-thumb{width:34px;height:34px;border-radius:6px;object-fit:cover;border:1px solid var(--line);cursor:pointer;}
+  .attach-btn{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.03em;border-radius:14px;padding:5px 10px;cursor:pointer;border:1px solid var(--line);background:none;color:var(--muted);}
+  .attach-btn:hover{border-color:var(--rust);color:var(--rust);}
+  .add-btn{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em;border-radius:20px;padding:9px 16px;cursor:pointer;border:1px solid var(--rust);background:var(--rust);color:var(--bg);font-weight:700;}
+  .row-actions{display:flex;gap:8px;margin-top:14px;}
+  .del-meal{color:var(--muted);font-size:16px;cursor:pointer;background:none;border:none;}
+  .del-meal:hover{color:var(--rust);}
+
   .pr-add-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
   .pr-add-form input{
     background:var(--card-2);border:1px solid var(--line);border-radius:6px;color:var(--text);
@@ -307,6 +340,13 @@
     .complete-bar{padding:12px 14px;}
     .mark-btn{padding:8px 14px;font-size:11px;}
     .conditioning{padding:14px;}
+    .totals-row{grid-template-columns:repeat(2,1fr);}
+    .meal-card{padding:14px;}
+    table.meals th, table.meals td{padding:6px 3px;}
+    table.meals input{width:52px;font-size:11px;padding:6px 4px;}
+    table.meals input[type="time"]{width:72px;}
+    .tabs{flex-wrap:wrap;}
+    .tab-btn{padding:8px 12px;font-size:11px;}
   }
   @media(max-width:400px){
     h1{font-size:24px;}
@@ -333,6 +373,7 @@
     <button class="tab-btn active" id="tabWorkoutBtn">Workout</button>
     <button class="tab-btn" id="tabPRBtn">PR Log</button>
     <button class="tab-btn" id="tabProgressBtn">Progress</button>
+    <button class="tab-btn" id="tabCaloriesBtn">Calories</button>
   </div>
 
   <div id="workoutView">
@@ -377,6 +418,41 @@
       <div class="block-label">1RM Progress Over Time</div>
       <p class="pr-intro">Charts pull from your PR Log entries above. Log a new PR any time you hit one to keep these growing.</p>
       <div id="progressWrap"></div>
+    </div>
+  </div>
+
+  <div id="caloriesView" style="display:none;">
+    <div class="daynav">
+      <button class="arrow" id="calPrevBtn" aria-label="Previous day">&#8592;</button>
+      <div class="center">
+        <div class="datestr" id="calDateStr">MONDAY, JAN 1</div>
+        <div class="day-title">Daily Log</div>
+      </div>
+      <button class="arrow" id="calNextBtn" aria-label="Next day">&#8594;</button>
+    </div>
+    <div class="nav-actions">
+      <button class="pill-btn" id="calTodayBtn">JUMP TO TODAY</button>
+    </div>
+
+    <div class="week">
+      <div class="week-head">
+        <h2>This week &mdash; tap any day to jump there</h2>
+        <div class="wknav">
+          <button id="calPrevWeekBtn">&#8592;</button>
+          <button id="calNextWeekBtn">&#8594;</button>
+        </div>
+      </div>
+      <div class="week-grid" id="calWeekGrid"></div>
+    </div>
+
+    <div class="totals-row" id="calTotalsRow"></div>
+
+    <div class="meal-card">
+      <div class="block-label">Meals Logged</div>
+      <div id="mealsTableWrap"></div>
+      <div class="row-actions">
+        <button class="add-btn" id="addMealBtn">+ Add meal</button>
+      </div>
     </div>
   </div>
 
@@ -638,6 +714,8 @@ function getPhaseTargetText(ex, phaseKey){
 const $ = (sel) => document.querySelector(sel);
 let currentDate = new Date();
 currentDate.setHours(0,0,0,0);
+let calDate = new Date();
+calDate.setHours(0,0,0,0);
 
 function isoOf(d){
   const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0");
@@ -674,6 +752,7 @@ if(!store.notes) store.notes = {}; // legacy whole-workout notes (no longer writ
 if(!store.completed) store.completed = {}; // completed[dateISO] = true
 if(!store.exNotes) store.exNotes = {}; // exNotes[dateISO][exerciseKey] = "text"
 if(!store.oneRM) store.oneRM = {}; // oneRM[exerciseKey] = manually entered 1RM number
+if(!store.calories) store.calories = {}; // calories[dateISO] = [{calories,protein,carbs,fat,time,photo}, ...]
 if(!store.prHistory) store.prHistory = {}; // prHistory[liftKey] = [{date, weight}, ...] — standalone log, no calc effect
 PR_LIFTS.forEach(lift => { if(!store.prHistory[lift.key]) store.prHistory[lift.key] = []; });
 // One-time migration from the older single-value PR format, if present.
@@ -1190,15 +1269,165 @@ function renderProgressView(){
   });
 }
 
+/* ================= CALORIE TRACKER ================= */
+function getMeals(iso){
+  if(!store.calories[iso]) store.calories[iso] = [];
+  return store.calories[iso];
+}
+function dayTotals(iso){
+  const meals = store.calories[iso] || [];
+  const t = {calories:0, protein:0, carbs:0, fat:0};
+  meals.forEach(m => {
+    t.calories += parseFloat(m.calories) || 0;
+    t.protein += parseFloat(m.protein) || 0;
+    t.carbs += parseFloat(m.carbs) || 0;
+    t.fat += parseFloat(m.fat) || 0;
+  });
+  return t;
+}
+// Resizes/compresses an image client-side before storing as base64, to keep localStorage usage manageable.
+function resizeImageFile(file, maxDim, callback){
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if(w > h && w > maxDim){ h = Math.round(h * maxDim/w); w = maxDim; }
+      else if(h > maxDim){ w = Math.round(w * maxDim/h); h = maxDim; }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL("image/jpeg", 0.6));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderCalDateNav(){
+  $("#calDateStr").textContent = fmtDateStr(calDate);
+}
+function renderCalWeekGrid(){
+  const grid = $("#calWeekGrid");
+  grid.innerHTML = "";
+  const monday = startOfWeek(calDate);
+  for(let i=0;i<7;i++){
+    const d = addDays(monday, i);
+    const iso = isoOf(d);
+    const totals = dayTotals(iso);
+    const hasData = (store.calories[iso] || []).length > 0;
+    const cell = document.createElement("div");
+    cell.className = "wcell calcell";
+    if(isoOf(d) === isoOf(calDate)) cell.classList.add("active");
+    cell.innerHTML = `
+      <div class="wd">${d.toLocaleDateString(undefined,{weekday:"short"}).toUpperCase()}</div>
+      <div class="dt">${d.getDate()}</div>
+      <div class="kcal">${hasData ? Math.round(totals.calories) + ' kcal' : '—'}</div>
+    `;
+    cell.title = fmtDateStr(d);
+    cell.addEventListener("click", () => { calDate = d; renderCalories(); });
+    grid.appendChild(cell);
+  }
+}
+function renderCalTotals(){
+  const iso = isoOf(calDate);
+  const t = dayTotals(iso);
+  $("#calTotalsRow").innerHTML = `
+    <div class="totals-card cal"><div class="lbl">Calories</div><div class="val">${Math.round(t.calories)}</div></div>
+    <div class="totals-card protein"><div class="lbl">Protein</div><div class="val">${Math.round(t.protein)}g</div></div>
+    <div class="totals-card carbs"><div class="lbl">Carbs</div><div class="val">${Math.round(t.carbs)}g</div></div>
+    <div class="totals-card fat"><div class="lbl">Fat</div><div class="val">${Math.round(t.fat)}g</div></div>
+  `;
+}
+function renderMealsTable(){
+  const iso = isoOf(calDate);
+  const meals = getMeals(iso);
+  const wrap = $("#mealsTableWrap");
+  if(!meals.length){
+    wrap.innerHTML = `<div class="pr-empty">No meals logged for this day yet — tap "+ Add meal" below.</div>`;
+    return;
+  }
+  const table = document.createElement("table");
+  table.className = "meals";
+  let rows = `<tr><th>Meal #</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Time</th><th>Photo</th><th></th></tr>`;
+  meals.forEach((m, idx) => {
+    rows += `<tr>
+      <td class="meal-name">${idx+1}</td>
+      <td><input type="number" data-idx="${idx}" data-field="calories" value="${m.calories || ''}" placeholder="kcal"></td>
+      <td><input type="number" data-idx="${idx}" data-field="protein" value="${m.protein || ''}" placeholder="g"></td>
+      <td><input type="number" data-idx="${idx}" data-field="carbs" value="${m.carbs || ''}" placeholder="g"></td>
+      <td><input type="number" data-idx="${idx}" data-field="fat" value="${m.fat || ''}" placeholder="g"></td>
+      <td><input type="time" data-idx="${idx}" data-field="time" value="${m.time || ''}"></td>
+      <td class="photo-cell">
+        ${m.photo
+          ? `<img class="photo-thumb" data-photo-idx="${idx}" src="${m.photo}" title="Click to replace">`
+          : `<button class="attach-btn" data-photo-idx="${idx}">Attach</button>`}
+        <input type="file" accept="image/*" id="fileInput_${idx}" style="display:none;">
+      </td>
+      <td><button class="del-meal" data-del-idx="${idx}" title="Delete meal">&times;</button></td>
+    </tr>`;
+  });
+  table.innerHTML = rows;
+  wrap.innerHTML = "";
+  wrap.appendChild(table);
+
+  wrap.querySelectorAll("input[data-idx]").forEach(input => {
+    input.addEventListener("input", () => {
+      const idx = parseInt(input.dataset.idx, 10), field = input.dataset.field;
+      getMeals(iso)[idx][field] = input.value;
+      saveStore();
+      renderCalTotals();
+      renderCalWeekGrid();
+    });
+  });
+  wrap.querySelectorAll("[data-photo-idx]").forEach(el => {
+    el.addEventListener("click", () => {
+      const idx = el.dataset.photoIdx;
+      document.getElementById(`fileInput_${idx}`).click();
+    });
+  });
+  wrap.querySelectorAll("input[type='file']").forEach(fileInput => {
+    fileInput.addEventListener("change", (e) => {
+      const idx = parseInt(fileInput.id.replace("fileInput_",""), 10);
+      const file = e.target.files[0];
+      if(!file) return;
+      resizeImageFile(file, 240, (dataUrl) => {
+        getMeals(iso)[idx].photo = dataUrl;
+        saveStore();
+        renderMealsTable();
+      });
+    });
+  });
+  wrap.querySelectorAll("[data-del-idx]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.dataset.delIdx, 10);
+      getMeals(iso).splice(idx, 1);
+      saveStore();
+      renderMealsTable();
+      renderCalTotals();
+      renderCalWeekGrid();
+    });
+  });
+}
+function renderCalories(){
+  renderCalDateNav();
+  renderCalWeekGrid();
+  renderCalTotals();
+  renderMealsTable();
+}
+
 function switchTab(tab){
   $("#workoutView").style.display = tab === "workout" ? "" : "none";
   $("#prView").style.display = tab === "pr" ? "" : "none";
   $("#progressView").style.display = tab === "progress" ? "" : "none";
+  $("#caloriesView").style.display = tab === "calories" ? "" : "none";
   $("#tabWorkoutBtn").classList.toggle("active", tab === "workout");
   $("#tabPRBtn").classList.toggle("active", tab === "pr");
   $("#tabProgressBtn").classList.toggle("active", tab === "progress");
+  $("#tabCaloriesBtn").classList.toggle("active", tab === "calories");
   if(tab === "pr") renderPRView();
   if(tab === "progress") renderProgressView();
+  if(tab === "calories") renderCalories();
 }
 
 function render(){
@@ -1219,6 +1448,22 @@ $("#nextWeekBtn").addEventListener("click", () => { currentDate = addDays(curren
 $("#tabWorkoutBtn").addEventListener("click", () => switchTab("workout"));
 $("#tabPRBtn").addEventListener("click", () => switchTab("pr"));
 $("#tabProgressBtn").addEventListener("click", () => switchTab("progress"));
+$("#tabCaloriesBtn").addEventListener("click", () => switchTab("calories"));
+$("#calPrevBtn").addEventListener("click", () => { calDate = addDays(calDate, -1); renderCalories(); });
+$("#calNextBtn").addEventListener("click", () => { calDate = addDays(calDate, 1); renderCalories(); });
+$("#calTodayBtn").addEventListener("click", () => {
+  calDate = new Date(); calDate.setHours(0,0,0,0); renderCalories();
+});
+$("#calPrevWeekBtn").addEventListener("click", () => { calDate = addDays(calDate, -7); renderCalories(); });
+$("#calNextWeekBtn").addEventListener("click", () => { calDate = addDays(calDate, 7); renderCalories(); });
+$("#addMealBtn").addEventListener("click", () => {
+  const iso = isoOf(calDate);
+  getMeals(iso).push({calories:"", protein:"", carbs:"", fat:"", time:"", photo:null});
+  saveStore();
+  renderMealsTable();
+  renderCalTotals();
+  renderCalWeekGrid();
+});
 
 /* ================= INIT ================= */
 render();
