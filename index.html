@@ -416,7 +416,7 @@ const PROGRAM = {
     title: "Sprints and Lower Body Strength",
     warmup: WARMUP,
     exercises: [
-      {name:"Max Effort Sprints", target:"10, 10, 10, 15, 15, 15, 20, 20, 20, 20 yds", sets:10, cols:[{key:"time",label:"Time (sec)"}], category:"sprint"},
+      {name:"Max Effort Sprints", target:"20, 20, 20, 25, 25, 25, 30, 30, 30, 30 yds", sets:10, cols:[{key:"time",label:"Time (sec)"}], category:"sprint"},
       {name:"Seated Vertical Jump", target:"3 x 3", sets:3, cols:[{key:"height",label:"Height/Notes"}], category:"plyo"},
       {name:"Seated Broad Jumps", target:"3 x 3", sets:3, cols:[{key:"distance",label:"Distance/Notes"}], category:"plyo"},
       {name:"Block Clean", target:"4 x 3", sets:4, cols:WEIGHT_REPS, category:"power"},
@@ -463,7 +463,7 @@ const PROGRAM = {
     title: "Sprints and Lower Body Strength",
     warmup: WARMUP,
     exercises: [
-      {name:"Max Effort Sprints", target:"10, 10, 10, 15, 15, 15, 20, 20, 20, 20 yds", sets:10, cols:[{key:"time",label:"Time (sec)"}], category:"sprint"},
+      {name:"Max Effort Sprints", target:"20, 20, 20, 25, 25, 25, 30, 30, 30, 30 yds", sets:10, cols:[{key:"time",label:"Time (sec)"}], category:"sprint"},
       {name:"Seated Vertical Jump", target:"3 x 3", sets:3, cols:[{key:"height",label:"Height/Notes"}], category:"plyo"},
       {name:"Seated Broad Jumps", target:"3 x 3", sets:3, cols:[{key:"distance",label:"Distance/Notes"}], category:"plyo"},
       {name:"Power Clean", target:"3 x 5", sets:3, cols:WEIGHT_REPS, category:"power"},
@@ -576,6 +576,16 @@ const FLAT_NOTES = {
   }
 };
 
+// Treadmill/in-place time targets for the "Max Effort Sprints" block (20,20,20,25,25,25,30,30,30,30 yds),
+// for gyms without room to sprint outright — generic average splits, rounded up to whole seconds for easy counting.
+// Tightens in Strength/Power phases for top-end speed, eases back off in Deload.
+const SPRINT_TIME_TARGETS = {
+  hypertrophy: [3,3,3,4,4,4,5,5,5,5],
+  strength:    [3,3,3,4,4,4,4,4,4,4],
+  power:       [2,2,2,3,3,3,4,4,4,4],
+  deload:      [3,3,3,4,4,4,5,5,5,5]
+};
+
 /* ================= PR LOG ================= */
 // A standalone record of your best-ever 1RM per lift. Purely informational —
 // it does not feed into or affect any working-max/percentage calculations elsewhere in the app.
@@ -614,6 +624,11 @@ function getPhaseTargetText(ex, phaseKey){
   if(CATEGORY_TEMPLATES[cat]){
     const t = CATEGORY_TEMPLATES[cat][phaseKey];
     return `${t.sets} x ${t.reps} · ${t.note}`;
+  }
+  if(cat === "sprint" && ex.name === "Max Effort Sprints"){
+    const times = SPRINT_TIME_TARGETS[phaseKey].join(", ");
+    const note = (FLAT_NOTES.sprint && FLAT_NOTES.sprint[phaseKey]) || "";
+    return `${ex.target} — treadmill/in-place target: ${times} sec${note ? " · " + note : ""}`;
   }
   const note = (FLAT_NOTES[cat] && FLAT_NOTES[cat][phaseKey]) || "";
   return note ? `${ex.target} — ${note}` : ex.target;
